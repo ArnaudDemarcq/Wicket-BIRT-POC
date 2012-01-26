@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-3.0.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+
+    <!-- FOR EASIER INJECTION (Not Working) -->
+    <tx:annotation-driven/>
+    <context:component-scan base-package="beans"/>
+    <context:component-scan base-package="test.dao"/>
+
+
+    <!-- DEFAULT VALUES FOR SYSTEM PROPERTIES -->
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="application.default.property.key">propertyDefalutValue</prop>
+            </props>
+        </property>
+        <property name="systemPropertiesModeName">
+            <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+        </property>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="testString" class="java.lang.String">
+        <constructor-arg>
+            <util:constant static-field="org.eclipse.birt.report.engine.api.IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY" />
+        </constructor-arg>
+    </bean>
+
+
+    <!-- BIRT OBJECTS -->
+    <bean id="birtEngineConfig" class="org.eclipse.birt.report.engine.api.EngineConfig">
+        <property name="engineHome" value="ReportEngine.samples" />
+    </bean>
+
+    
+    <bean id="birtEngineFactory" class="org.krohm.birtstuff.BirtEngineFactory" init-method="init">
+        <property name="config" ref="birtEngineConfig"/>
+    </bean>
+
+    <bean id="birtEngine" factory-bean="birtEngineFactory" factory-method="getEngine" />
+    
+    <!--
+    <bean id="birtEngine" factory-bean="birtEngineFactory" factory-method="getEngine" />
+
+    
+    <bean id="birtPlatform" class="org.eclipse.birt.core.framework.Platform" />
+
+    <bean id="birtEngineFactory" factory-bean="birtPlatform" factory-method="createFactoryObject" >
+        <constructor-arg>
+            <util:constant static-field="org.eclipse.birt.report.engine.api.IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY" />
+        </constructor-arg>
+    </bean> -->
+
+
+
+
+
+
+
+
+    <!-- THE WEB APPLICATION MUST BE DEFINED AS SPRING BEAN -->
+    <!--
+        <bean id="wicketApplication" class="test.MyApplication" />
+    -->
+
+</beans>
